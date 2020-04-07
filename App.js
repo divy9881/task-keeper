@@ -6,11 +6,15 @@ import Task from './Components/Task'
 
 const App = () => {
 	const [visibilityMode, setVisibilityMode] = useState(false)
-	const [tasks, addTask] = useState([])
-	const [numOfTask, incrementNumOfTasks] = useState('0')
+	const [tasks, setTasks] = useState([])
+	const [idOfTask, incrementIdOfTask] = useState('0')
+
+	const deleteTask = (key) => {
+		setTasks((currentTasks) => currentTasks.filter((task) => key !== task.key))
+	}
 
 	const renderTask = (object) => {
-        return <Task task = {object.item.task}/>
+        return <Task item = {object.item} deleteTask = {deleteTask}/>
     }
 
 	const addTaskHandler = () => {
@@ -24,20 +28,22 @@ const App = () => {
 	const addTaskFunction = (taskText) => {
 		const task = {
 			task:taskText,
-			key:numOfTask
+			key:idOfTask
 		}
 
-		addTask((currentTasks) => [...currentTasks, task])
-		incrementNumOfTasks((Number(numOfTask)+1).toString())
+		setTasks((currentTasks) => [...currentTasks, task])
+		incrementIdOfTask((Number(idOfTask)+1).toString())
 	}
 	
 	return (
 		<View style={styles.app_contianer}>
 			<InputModal visibility = {visibilityMode} cancelHandler = {cancelHandler} addTask={addTaskFunction}/>
 			<View style={styles.add_button_view}>
-				<Button title="ADD A TASK" style={styles.add_task_button} onPress={addTaskHandler}/>
+				<Button title="ADD A TASK" onPress={addTaskHandler}/>
 			</View>
-			<FlatList data = {tasks} renderItem = {renderTask}/>
+			<View style={styles.task_list}>
+				<FlatList data = {tasks} renderItem = {renderTask}/>
+			</View>
 		</View>
 	)
 }
@@ -51,7 +57,9 @@ const styles = StyleSheet.create({
 	add_button_view:{
 		width:'60%'
 	},
-	add_task_button:{
+	task_list:{
+		width:'85%',
+		marginTop:10
 	}
 })
 
